@@ -20,8 +20,7 @@ import android.R.attr.password
 import android.support.v4.app.FragmentActivity
 import android.util.Log
 import android.R.attr.password
-
-
+import android.content.Intent
 
 
 class signIn : AppCompatActivity() {
@@ -55,7 +54,7 @@ class signIn : AppCompatActivity() {
                                 this, "Sign Up Successful",
                                 Toast.LENGTH_LONG
                             ).show()
-                            val user = mAuth.getCurrentUser()
+                            signInFun(textemail, textpass)
 
 
                         } else {
@@ -78,37 +77,47 @@ class signIn : AppCompatActivity() {
         }
 
         signInbtn.setOnClickListener {
-            var email = textemail.text.toString().trim()
-            var pass = textpass.text.toString().trim()
-
-            if (TextUtils.isEmpty(email) || TextUtils.isEmpty(pass)) {
-                Toast.makeText(this, "Please enter valid info", Toast.LENGTH_LONG).show()
-            } else {
-                progressBar.visibility = View.VISIBLE
-                mAuth.signInWithEmailAndPassword(email, pass)
-                    .addOnCompleteListener(this) { task ->
-                        if (task.isSuccessful) {
-                            // Sign in success, update UI with the signed-in user's information
-                            Toast.makeText(this, "Sign In Successful", Toast.LENGTH_LONG).show()
-                            val user = mAuth.currentUser
-
-                        } else {
-                            // If sign in fails, display a message to the user.
-                            Log.w(TAG, "signInWithEmail:failure", task.exception)
-                            Toast.makeText(
-                                this, "Authentication failed.",
-                                Toast.LENGTH_SHORT
-                            ).show()
-
-                        }
-
-                        // ...
-                    }
-                progressBar.visibility = View.INVISIBLE
-
-            }
+            signInFun(textemail,textpass)
         }
 
 
+
+
+
+    }
+
+    fun signInFun(textEmail: EditText, textPass:EditText) {
+        var email = textEmail.text.toString().trim()
+        var pass = textPass.text.toString().trim()
+
+        if (TextUtils.isEmpty(email) || TextUtils.isEmpty(pass)) {
+            Toast.makeText(this, "Please enter valid info", Toast.LENGTH_LONG).show()
+        } else {
+            progressBar.visibility = View.VISIBLE
+            mAuth.signInWithEmailAndPassword(email, pass)
+                .addOnCompleteListener(this) { task ->
+                    if (task.isSuccessful) {
+                        // Sign in success, update UI with the signed-in user's information
+                        Toast.makeText(this, "Sign In Successful", Toast.LENGTH_LONG).show()
+                        val user = mAuth.currentUser
+                        val intent = Intent(this, MainActivity::class.java)
+                        startActivity(intent)
+                        finish()
+
+                    } else {
+                        // If sign in fails, display a message to the user.
+                        Log.w(TAG, "signInWithEmail:failure", task.exception)
+                        Toast.makeText(
+                            this, "Authentication failed.",
+                            Toast.LENGTH_SHORT
+                        ).show()
+
+                    }
+
+                    // ...
+                }
+            progressBar.visibility = View.INVISIBLE
+
+        }
     }
 }
