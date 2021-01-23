@@ -20,6 +20,7 @@ class SignIn : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_sign_in)
 
+        progressBar.visibility = View.GONE
         signUpbtn.setOnClickListener {
             val emailId = email.text.toString().trim()
             val password = password.text.toString().trim()
