@@ -26,6 +26,8 @@ import com.github.hiteshsondhi88.libffmpeg.FFmpeg
 import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.*
 import com.google.android.gms.tasks.Task
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageMetadata
 import kotlinx.android.synthetic.main.activity_main.*
@@ -49,6 +51,7 @@ class MainActivity : AppCompatActivity() {
     private val updateInterval = (2 * 1000).toLong()  /* 10 secs */
     private val fastestInterval: Long = 2000 /* 2 sec */
     private var filePath: String? = ""
+    private lateinit var myRef: DatabaseReference
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,6 +62,8 @@ class MainActivity : AppCompatActivity() {
         uploadProgress.visibility = View.INVISIBLE
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+
+        myRef = FirebaseDatabase.getInstance().reference
 
         if(checkPermissions()){
             requestMultiplePermissions()
@@ -321,7 +326,7 @@ class MainActivity : AppCompatActivity() {
                 finalLocation = location!!.lastLocation
                 if(finalLocation!=null){
                     //Toast.makeText(this@MainActivity, finalLocation!!.latitude.toString(), Toast.LENGTH_LONG).show()
-                    uploadVideo()
+                    uploadImages()
                     stopLocationUpdates()
                 }
             }
@@ -361,7 +366,7 @@ class MainActivity : AppCompatActivity() {
 
     private var imagesLeft = NO_OF_IMAGES
 
-    private fun uploadVideo() {
+    private fun uploadImages() {
         while (finalLocation==null);
         var fileString: String
 
@@ -376,6 +381,7 @@ class MainActivity : AppCompatActivity() {
             }
 
         }
+        myRef.child("directory").child("locationPath").setValue(locationPath())
     }
 
     private fun uploadImageTask(fileString: String) {
